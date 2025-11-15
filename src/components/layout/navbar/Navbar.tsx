@@ -6,6 +6,7 @@ import { ChevronDown, ChevronRight, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { useState } from "react";
+import Link from "next/link";
 
 export function Navbar() {
   const { t } = useLanguage();
@@ -94,14 +95,20 @@ export function Navbar() {
           </ul>
 
           <div className="hidden lg:flex items-center gap-3.5">
-            <button className="text-sm font-semibold text-foreground hover:text-muted-foreground transition-colors">
+            <Link
+              href="/login"
+              className="w-fit cursor-pointer hover:text-black hover:underline text-base font-medium text-gray-700 w-full text-left"
+            >
               {t("navbar_buttons_login")}
-            </button>
+            </Link>
             <span className="text-gray-400">/</span>
-            <button className="flex items-center gap-2 px-6 py-3.5 bg-[#060318] text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity">
+            <Link
+              href="/onboarding"
+              className="flex items-center gap-2 px-6 py-3.5 bg-[#060318] text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity whitespace-nowrap"
+            >
               {t("navbar_buttons_joinus")}
               <ChevronRight className="w-4 h-4" />
-            </button>
+            </Link>
           </div>
 
           <button
@@ -119,13 +126,19 @@ export function Navbar() {
             </ul>
 
             <div className="flex flex-col gap-4 mt-6">
-              <button className="text-base font-medium text-gray-700 w-full text-left">
+              <Link
+                href="/login"
+                className="cursor-pointer hover:text-black hover:underline text-base font-medium text-gray-700 w-full text-left"
+              >
                 {t("navbar_buttons_login")}
-              </button>
-              <button className="flex items-center justify-center gap-2 px-6 py-3.5 bg-[#060318] text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity">
+              </Link>
+              <Link
+                href={"/onboarding"}
+                className="flex items-center justify-center gap-2 px-6 py-3.5 bg-[#060318] text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
+              >
                 {t("navbar_buttons_joinus")}
                 <ChevronRight className="w-4 h-4" />
-              </button>
+              </Link>
             </div>
           </div>
         )}
