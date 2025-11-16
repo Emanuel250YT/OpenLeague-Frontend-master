@@ -53,7 +53,7 @@ export function DashboardNavbar({ link, returnData }: DashboardNavbarProps) {
     { label: t("dashboard_nav_mission"), href: "/dashboard/mission" },
     { label: t("dashboard_nav_providers"), href: "/dashboard/providers" },
     { label: t("dashboard_nav_settings"), href: "/dashboard/settings" },
-    { label: t("dashboard_nav_upload"), href: "/dashboard/challenges/upload" },
+    // { label: t("dashboard_nav_upload"), href: "/dashboard/challenges/upload" },
   ];
 
   const visibleLinks = navLinks.slice(0, 5);
