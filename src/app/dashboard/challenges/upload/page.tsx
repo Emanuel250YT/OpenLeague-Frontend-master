@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { DashboardNavbar } from "@/components/dashboard/DashboardNavbar";
 import { Loader2, Plus } from "lucide-react";
 import { Footer } from "@/components/layout/footer/Footer";
@@ -9,6 +10,8 @@ import { api } from "@/lib/api";
 import clsx from "clsx";
 
 export default function UploadChallengePage() {
+  const searchParams = useSearchParams();
+  const challengeId = searchParams.get("challengeId");
   const [selectedType, setSelectedType] = useState("");
   const [selectedChallenge, setSelectedChallenge] = useState("");
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -16,57 +19,28 @@ export default function UploadChallengePage() {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successUrl, setSuccessUrl] = useState<string | null>(null);
+  const [challengeTitle, setChallengeTitle] = useState<string | null>(null);
+  const [isSubmittingResult, setIsSubmittingResult] = useState(false);
 
-  const challengeTypes = [
-    {
-      id: "technical",
-      name: "Técnica",
-      icon: "⚽",
-      challenges: [
-        "Control orientado",
-        "Precisión en pases largos",
-        "Remate a portería",
-        "Conducción en zigzag",
-        "Control de balón aéreo",
-      ],
-    },
-    {
-      id: "physical",
-      name: "Física",
-      icon: "💪",
-      challenges: [
-        "Sprint 40 metros",
-        "Resistencia aeróbica",
-        "Agilidad con escalera",
-        "Salto vertical",
-        "Cambios de dirección",
-      ],
-    },
-    {
-      id: "tactical",
-      name: "Táctica",
-      icon: "🧠",
-      challenges: [
-        "Toma de decisiones bajo presión",
-        "Posicionamiento defensivo",
-        "Lectura de jugada",
-        "Anticipación en duelos",
-        "Desmarque inteligente",
-      ],
-    },
-    {
-      id: "mental",
-      name: "Mental",
-      icon: "🎖️",
-      challenges: [
-        "Disciplina semanal",
-        "Constancia en entrenamientos",
-        "Gestión del estrés",
-        "Concentración en partido",
-        "Recuperación activa",
-      ],
-    },
-  ];
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      if (!challengeId) return;
+      try {
+        const ch = await api.challenges.getById(challengeId);
+        if (!mounted) return;
+        setChallengeTitle(ch?.title ?? null);
+        if (ch?.title) setSelectedChallenge(ch.title);
+      } catch {
+        if (!mounted) return;
+        setChallengeTitle(null);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [challengeId]);
+
 
   const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -86,8 +60,27 @@ export default function UploadChallengePage() {
           `${selectedType} - ${selectedChallenge} | ${description}`.trim(),
         enableDashStreaming: false,
       });
+      const fileId = resp?.data?.id;
       const url = resp?.data?.publicUrl;
       setSuccessUrl(url || null);
+
+      if (challengeId) {
+        setIsSubmittingResult(true);
+        try {
+          await api.challenges.submitResult(challengeId, {
+            challengeId,
+            description: description?.trim() || undefined,
+            arkaFileId: String(fileId),
+            videoUrl: String(url),
+            metadata: {
+              type: selectedType || undefined,
+              challenge: selectedChallenge || undefined,
+            },
+          } as const);
+        } finally {
+          setIsSubmittingResult(false);
+        }
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       const msg =
@@ -125,7 +118,7 @@ export default function UploadChallengePage() {
         )}
         {successUrl && (
           <div className="mb-4 px-4 py-3 rounded-lg bg-green-50 border border-green-200 text-sm text-green-800">
-            Video subido correctamente.{" "}
+            {challengeId ? "Video subido y resultado enviado. " : "Video subido correctamente. "}
             {successUrl ? (
               <a
                 className="underline"
@@ -136,15 +129,36 @@ export default function UploadChallengePage() {
                 Ver archivo
               </a>
             ) : null}
+            {challengeId && (
+              <>
+                {" · "}
+                <Link className="underline" href={`/dashboard/challenges/${challengeId}`}>
+                  Ver reto
+                </Link>
+              </>
+            )}
           </div>
         )}
         <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
+          {challengeId && (
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+              <h2 className="text-xl font-bold text-black mb-1">
+                Reto seleccionado
+              </h2>
+              <p className="text-black font-semibold mt-1">
+                {challengeTitle ?? "Cargando..."}
+              </p>
+              <p className="text-sm text-gray-600 mt-2">
+                Sube el video para enviar la evidencia de este reto.
+              </p>
+            </div>
+          )}
+          {/* <div className="bg-white border border-gray-200 rounded-xl p-6">
             <h2 className="text-xl font-bold text-black mb-4">
               1. Selecciona el tipo de reto
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {challengeTypes.map((type) => (
+              {(challengeId ? [] : challengeTypes).map((type) => (
                 <button
                   key={type.id}
                   type="button"
@@ -166,7 +180,7 @@ export default function UploadChallengePage() {
             </div>
           </div>
 
-          {selectedType && (
+          {!challengeId && selectedType && (
             <div className="bg-white border border-gray-200 rounded-xl p-6">
               <h2 className="text-xl font-bold text-black mb-4">
                 2. Elige el reto específico
@@ -190,12 +204,12 @@ export default function UploadChallengePage() {
                   ))}
               </div>
             </div>
-          )}
+          )} */}
 
-          {selectedChallenge && (
+          {(challengeId || selectedChallenge) && (
             <div className="bg-white border border-gray-200 rounded-xl p-6">
               <h2 className="text-xl font-bold text-black mb-4">
-                3. Sube tu video
+                1. Sube tu video
               </h2>
               <div className="space-y-4">
                 <div
@@ -271,7 +285,7 @@ export default function UploadChallengePage() {
             </div>
           )}
 
-          {selectedChallenge && (
+          {(challengeId || selectedChallenge) && (
             <div className="bg-blue-50 border border-blue-200 p-6 rounded-xl">
               <h3 className="font-bold text-blue-900 mb-2">
                 ¿Cómo funciona la validación?
@@ -302,7 +316,7 @@ export default function UploadChallengePage() {
             </div>
           )}
 
-          {videoFile && selectedChallenge && (
+          {videoFile && (challengeId || selectedChallenge) && (
             <div className="flex gap-4">
               <Link
                 href="/dashboard/challenges"
@@ -312,23 +326,31 @@ export default function UploadChallengePage() {
               </Link>
               <button
                 type="submit"
-                disabled={isUploading}
+                disabled={isUploading || isSubmittingResult}
                 className={clsx(
                   "flex-1 bg-black text-white px-8 py-4 rounded-full font-bold hover:bg-gray-900 transition-colors disabled:bg-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-black flex items-center justify-center gap-2",
-                  { "opacity-50 cursor-not-allowed": isUploading, "opacity-100 cursor-pointer": !isUploading}
+                  {
+                    "opacity-50 cursor-not-allowed":
+                      isUploading || isSubmittingResult,
+                    "opacity-100 cursor-pointer": !isUploading && !isSubmittingResult,
+                  }
                 )}
               >
-                {isUploading ? (
+                {isUploading || isSubmittingResult ? (
                   <>
                     <Loader2 className="h-5 w-5 animate-spin" />
-                    Subiendo...
+                    {isSubmittingResult ? "Enviando resultado..." : "Subiendo..."}
                   </>
                 ) : (
                   "Enviar reto"
                 )}
               </button>
               <span className="sr-only" aria-live="polite">
-                {isUploading ? "Subiendo video" : ""}
+                {isUploading
+                  ? "Subiendo video"
+                  : isSubmittingResult
+                  ? "Enviando resultado"
+                  : ""}
               </span>
             </div>
           )}
