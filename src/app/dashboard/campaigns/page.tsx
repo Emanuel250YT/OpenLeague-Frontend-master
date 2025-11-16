@@ -79,13 +79,11 @@ export default function CampaignsListPage() {
                 <div key={c.id} className="p-4 rounded-xl border border-gray-200 bg-gray-50 flex flex-col gap-2">
                   {c.photoUrl ? (
                     <div className="relative w-full h-40 overflow-hidden rounded-lg">
-                      <Image
+                      <img
                         src={c.photoUrl}
                         alt={c.title}
-                        fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover"
-                        priority={false}
                       />
                     </div>
                   ) : (

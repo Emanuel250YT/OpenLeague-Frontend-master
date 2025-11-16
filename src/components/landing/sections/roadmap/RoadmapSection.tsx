@@ -30,7 +30,7 @@ export function RoadmapSection() {
 
   return (
     <section className="relative w-full pt-12 pb-24 bg-[#0b0d0f]">
-      <Separator index={6} title="Roadmap" theme="dark"></Separator>
+      <Separator index={5} title="Roadmap" theme="dark"></Separator>
       <div className="relative w-[91%] sm:w-[86%] md:w-[81%] mx-auto overflow-hidden space-y-16">
         <div className="grid grid-cols-1 md:grid-cols-2 px-[1%] gap-10 md:gap-0">
           <div className="flex md:justify-end max-w-full md:max-w-[75%]">

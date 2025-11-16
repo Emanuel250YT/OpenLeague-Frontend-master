@@ -9,7 +9,7 @@ import Link from "next/link";
 export function FoundersSection() {
   return (
     <section id="founders" className="relative w-full pb-12 bg-gray-100">
-      <Separator index={7} title="Founders" theme="extralight" />
+      <Separator index={6} title="Founders" theme="extralight" />
 
       <div className="relative w-[90%] sm:w-[85%] md:w-[80%] mx-auto overflow-hidden space-y-12">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-0">

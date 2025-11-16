@@ -20,7 +20,7 @@ export function JourneySection() {
   return (
     <section id="journey" className="relative w-full pb-12 bg-[#0b0d0f]">
       <div className="absolute bottom-0 left-0 w-full h-[12%] sm:h-[25%] bg-white" />
-      <Separator index={4} title="Journey" theme="dark" />
+      <Separator index={3} title="Journey" theme="dark" />
 
       <div className="relative w-[92%] sm:w-[87%] md:w-[82%] mx-auto overflow-hidden space-y-12">
         <div className="flex flex-col md:flex-row gap-6 md:gap-0 items-start md:items-center">

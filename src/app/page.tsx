@@ -26,7 +26,7 @@ export default function Home() {
       <Separator index={2} title="Members"></Separator>
       <MembersSection></MembersSection>
       <JourneySection></JourneySection>
-      <Separator index={3} title="Socials"></Separator>
+      <Separator index={4} title="Socials"></Separator>
       <SocialsSection></SocialsSection>
       <RoadmapSection></RoadmapSection>
       <FoundersSection></FoundersSection>
