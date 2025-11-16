@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { useState, useRef, useEffect } from "react";
+import { useLanguage, LanguageSelector } from "../layout/navbar/LanguageSelector";
 
 interface DashboardNavbarProps {
   link?: {
@@ -21,6 +22,7 @@ interface DashboardNavbarProps {
 export function DashboardNavbar({ link, returnData }: DashboardNavbarProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const { t } = useLanguage();
 
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -33,20 +35,20 @@ export function DashboardNavbar({ link, returnData }: DashboardNavbarProps) {
   }, []);
 
   const navLinks = [
-    { label: "Inicio", href: "/dashboard" },
-    { label: "Retos", href: "/dashboard/challenges" },
-    { label: "Formación", href: "/dashboard/training" },
-    { label: "Puntaje", href: "/dashboard/score" },
-    { label: "Plan PRO", href: "/dashboard/pro/plan" },
-    { label: "Campaña", href: "/dashboard/campaign" },
-    { label: "Wallet", href: "/dashboard/wallet" },
-    { label: "Notificaciones", href: "/dashboard/notifications" },
-    { label: "Contrato", href: "/dashboard/contract" },
-    { label: "Clubes", href: "/dashboard/clubs" },
-    { label: "Misión", href: "/dashboard/mission" },
-    { label: "Proveedores", href: "/dashboard/providers" },
-    { label: "Configuración", href: "/dashboard/settings" },
-    { label: "Subir", href: "/dashboard/challenges/upload" },
+    { label: t("dashboard_nav_home"), href: "/dashboard" },
+    { label: t("dashboard_nav_challenges"), href: "/dashboard/challenges" },
+    { label: t("dashboard_nav_training"), href: "/dashboard/training" },
+    { label: t("dashboard_nav_score"), href: "/dashboard/score" },
+    { label: t("dashboard_nav_pro_plan"), href: "/dashboard/pro/plan" },
+    { label: t("dashboard_nav_campaign"), href: "/dashboard/campaign" },
+    { label: t("dashboard_nav_wallet"), href: "/dashboard/wallet" },
+    { label: t("dashboard_nav_notifications"), href: "/dashboard/notifications" },
+    { label: t("dashboard_nav_contract"), href: "/dashboard/contract" },
+    { label: t("dashboard_nav_clubs"), href: "/dashboard/clubs" },
+    { label: t("dashboard_nav_mission"), href: "/dashboard/mission" },
+    { label: t("dashboard_nav_providers"), href: "/dashboard/providers" },
+    { label: t("dashboard_nav_settings"), href: "/dashboard/settings" },
+    { label: t("dashboard_nav_upload"), href: "/dashboard/challenges/upload" },
   ];
 
   const visibleLinks = navLinks.slice(0, 5);
@@ -65,13 +67,14 @@ export function DashboardNavbar({ link, returnData }: DashboardNavbarProps) {
               {returnData.label}
             </Link>
             <h1 className="font-kensmark font-bold text-xl">Open League</h1>
+            <LanguageSelector />
           </div>
 
           <div className="flex items-center gap-2">
             <ul
               className="flex items-center gap-2"
               role="tablist"
-              aria-label="Navegación del panel"
+              aria-label={t("dashboard_aria_nav")}
             >
               {visibleLinks.map((item) => {
                 const isActive = pathname === item.href;
