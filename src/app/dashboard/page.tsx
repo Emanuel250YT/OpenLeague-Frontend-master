@@ -252,6 +252,12 @@ export default function DashboardPage() {
                 <h3 className="text-lg font-bold text-black uppercase">
                   Notificaciones
                 </h3>
+                <Link
+                  href="/dashboard/notifications"
+                  className="text-xs font-bold text-gray-600 hover:text-black transition-colors"
+                >
+                  Ver todas
+                </Link>
                 <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                   {notifications.length}
                 </span>
