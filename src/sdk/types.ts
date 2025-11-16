@@ -229,4 +229,81 @@ export interface CreateSubmissionRequest {
   metadata?: Record<string, unknown>;
 }
 
+export type CouponType = 'GAS_SPONSORSHIP' | 'FILE_UPLOAD' | 'PREMIUM_FEATURE';
+export type CouponStatus = 'ACTIVE' | 'USED' | 'EXPIRED' | 'REVOKED';
 
+export interface CouponSummary {
+  id: string;
+  code: string;
+  type: CouponType;
+  description?: string | null;
+  arkaPolicyId?: string | null;
+  arkaWalletAddress?: string | null;
+  maxUses: number;
+  currentUses: number;
+  maxAmountPerUse?: number | null;
+  expiresAt?: string | null;
+  status: CouponStatus;
+  createdAt?: string;
+  updatedAt?: string;
+  createdById?: string;
+  createdBy?: {
+    id: string;
+    email: string;
+    name?: string | null;
+  };
+  // restante calculado por backend en varias respuestas
+  remainingUses?: number;
+}
+
+export interface CouponUsageSummary {
+  id: string;
+  usedAt: string;
+  amount?: number | null;
+  txHash?: string | null;
+  metadata?: Record<string, unknown> | null;
+  ipAddress?: string | null;
+  userId?: string;
+  couponId?: string;
+  user?: {
+    id: string;
+    email: string;
+    name?: string | null;
+  };
+  coupon?: Pick<CouponSummary, 'id' | 'code' | 'type' | 'description'>;
+}
+
+export interface CreateCouponRequest {
+  type: CouponType;
+  description?: string;
+  maxUses: number;
+  maxAmountPerUse?: number;
+  expiresAt?: string | null; // ISO string or null
+  customCode?: string; // opcional para setear código manual
+}
+
+export interface ValidateCouponRequest {
+  code: string;
+}
+
+export interface ValidateCouponResponse {
+  valid: boolean;
+  coupon?: CouponSummary;
+}
+
+export interface UseCouponRequest {
+  code: string;
+  amount?: number;
+  txHash?: string;
+  metadata?: Record<string, unknown>;
+  ipAddress?: string;
+}
+
+export interface UseCouponResponse {
+  success: boolean;
+  usage: CouponUsageSummary;
+  coupon: Pick<
+    CouponSummary,
+    'id' | 'code' | 'type' | 'status' | 'maxUses' | 'currentUses' | 'remainingUses' | 'maxAmountPerUse' | 'expiresAt'
+  >;
+}

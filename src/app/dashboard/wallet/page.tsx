@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { DashboardNavbar } from "@/components/dashboard/DashboardNavbar";
 import { Footer } from "@/components/layout/footer/Footer";
-import { Plus } from "lucide-react";
 import { api } from "@/lib/api";
 import { WalletSummary } from "@/components/wallet/WalletSummary";
 
@@ -19,25 +18,11 @@ export default function WalletPage() {
   const [balancesByWallet, setBalancesByWallet] = useState<
     Record<string, { nativeSymbol: string; nativeAmount: number; usdValue: number }>
   >({});
-
-  const incoming = [
-    { type: "Inversión", amount: 50, date: "2025-02-10" },
-    { type: "Donación", amount: 20, date: "2025-02-09" },
-    { type: "Beca", amount: 100, date: "2025-02-05" },
-    { type: "Recompensa", amount: 10, date: "2025-02-01" },
-  ];
-
-  const actions = [
-    { label: "Gastar dentro de OL", disabled: false },
-    { label: "Transferir a cuenta bancaria", disabled: false },
-    { label: "Usar como Wallet Web3", disabled: false },
-  ];
-
-  const expenseSteps = [
-    "Subir recibo",
-    "Foto del producto/servicio",
-    "Proveedor verificado (si aplica)",
-  ];
+ 
+  type IncomingItem = { type: string; amount: number; date: string };
+  const [incoming, setIncoming] = useState<IncomingItem[]>([]);
+  const [loadingIncoming, setLoadingIncoming] = useState<boolean>(false);
+  const [errorIncoming, setErrorIncoming] = useState<string | null>(null);
 
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [loadingWallets, setLoadingWallets] = useState(true);
@@ -111,6 +96,32 @@ export default function WalletPage() {
         setError("No se pudieron cargar las wallets.");
       } finally {
         if (mounted) setLoadingWallets(false);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+ 
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      setErrorIncoming(null);
+      setLoadingIncoming(true);
+      try {
+        const usage = await api.coupons.myUsage();
+        if (!mounted) return;
+        const items: IncomingItem[] = (usage || []).map(u => ({
+          type: u?.coupon?.type ?? "Cupón",
+          amount: typeof u?.amount === "number" ? u.amount : 0,
+          date: (u?.usedAt ?? "").slice(0, 10),
+        }));
+        setIncoming(items);
+      } catch {
+        if (!mounted) return;
+        setErrorIncoming("No se pudieron cargar los ingresos.");
+      } finally {
+        if (mounted) setLoadingIncoming(false);
       }
     })();
     return () => {
@@ -246,18 +257,29 @@ export default function WalletPage() {
 
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
               <h3 className="text-xl font-bold text-black mb-4">Ingresos</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {incoming.map((i, idx) => (
-                  <div
-                    key={idx}
-                    className="p-4 bg-gray-50 rounded-xl border border-gray-200"
-                  >
-                    <p className="font-bold text-black">{i.type}</p>
-                    <p className="text-sm text-gray-600">${i.amount}</p>
-                    <p className="text-xs text-gray-500 mt-1">{i.date}</p>
-                  </div>
-                ))}
-              </div>
+              {errorIncoming && (
+                <div className="mb-3 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
+                  {errorIncoming}
+                </div>
+              )}
+              {loadingIncoming ? (
+                <p className="text-sm text-gray-600">Cargando ingresos...</p>
+              ) : incoming.length === 0 ? (
+                <p className="text-sm text-gray-600">No hay ingresos aún.</p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {incoming.map((i, idx) => (
+                    <div
+                      key={idx}
+                      className="p-4 bg-gray-50 rounded-xl border border-gray-200"
+                    >
+                      <p className="font-bold text-black">{i.type}</p>
+                      <p className="text-sm text-gray-600">${i.amount}</p>
+                      <p className="text-xs text-gray-500 mt-1">{i.date}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
               {/* <a
                 href="/dashboard/wallet/expense"
                 className="inline-flex items-center justify-center mt-4 bg-black text-white px-6 py-3 rounded-full font-bold hover:bg-gray-900 transition-colors"

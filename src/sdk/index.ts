@@ -8,6 +8,7 @@ import { NotificationsApi } from "./notifications";
 import { ChallengesApi } from "./challenges";
 import { ProfilesApi } from "./profiles";
 import { DashboardApi } from "./dashboard";
+import { CouponsApi } from './coupons';
 
 export interface OpenLeagueApiClient {
   http: AxiosInstance;
@@ -19,6 +20,7 @@ export interface OpenLeagueApiClient {
   challenges: ChallengesApi;
   profiles: ProfilesApi;
   dashboard: DashboardApi;
+  coupons: CouponsApi;
 }
 
 export function createOpenLeagueApiClient(
@@ -35,6 +37,7 @@ export function createOpenLeagueApiClient(
     challenges: new ChallengesApi(http),
     profiles: new ProfilesApi(http),
     dashboard: new DashboardApi(http),
+    coupons: new CouponsApi(http),
   };
 }
 
@@ -45,3 +48,4 @@ export * from "./notifications";
 export * from "./challenges";
 export * from "./profiles";
 export * from "./dashboard";
+export * from "./coupons";

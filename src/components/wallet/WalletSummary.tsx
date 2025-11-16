@@ -22,7 +22,7 @@ export function WalletSummary({ viewDetails = true }: { viewDetails?: boolean })
     const url =
       "https://api.coingecko.com/api/v3/simple/price?ids=polkadot,moonbeam,ethereum,tether&vs_currencies=usd";
     const res = await fetch(url, { cache: "no-store" });
-    // if (!res.ok) throw new Error("price_fetch_failed");
+    if (!res.ok) throw new Error("price_fetch_failed");
     const data = (await res.json()) as Record<string, { usd: number }>;
     return {
       polkadot: data?.polkadot?.usd ?? 0,
