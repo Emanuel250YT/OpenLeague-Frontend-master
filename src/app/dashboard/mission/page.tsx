@@ -12,7 +12,7 @@ export default function MissionPage() {
         "Suben retos, mejoran, pueden recibir pequeñas donaciones.",
     },
     {
-      title: "Jugador PRO (pago o beca)",
+      title: "Jugador PRO (beca)",
       description:
         "Entrenamiento avanzado, validación, análisis, reputación.",
     },
@@ -30,11 +30,6 @@ export default function MissionPage() {
   return (
     <div className="min-h-screen bg-white space-y-12">
       <DashboardNavbar
-        link={{
-          label: "Subir Video",
-          href: "/dashboard/challenges/upload",
-          icon: <Plus />,
-        }}
         returnData={{ label: "Volver al panel", href: "/dashboard" }}
       />
 
