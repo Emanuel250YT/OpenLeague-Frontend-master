@@ -284,9 +284,12 @@ export default function ChallengesPage() {
                     Subir video
                   </Link>
                 ) : (
-                  <button className="cursor-pointer flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-full font-bold hover:bg-gray-200 transition-colors">
+                  <Link
+                    href={`/dashboard/challenges/${challenge.id}`}
+                    className="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-full font-bold hover:bg-gray-200 transition-colors text-center"
+                  >
                     Ver detalles
-                  </button>
+                  </Link>
                 )}
               </div>
             </div>
