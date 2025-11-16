@@ -56,7 +56,7 @@ export function Footer() {
           <div className="max-w-md">
             <span className="font-kensmark font-bold text-xl">Open League</span>
             <p className="text-sm text-gray-500 leading-relaxed">
-              Driven by passion, united by purpose, SportsLeague is built on
+              Driven by passion, united by purpose, OpenLeague is built on
               grit, loyalty, and the dream of footballing greatness.
             </p>
           </div>
