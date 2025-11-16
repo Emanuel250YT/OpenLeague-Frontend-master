@@ -21,6 +21,8 @@ export function DashboardNavbar({ link, returnData }: DashboardNavbarProps) {
     { label: "Inicio", href: "/dashboard" },
     { label: "Retos", href: "/dashboard/challenges" },
     { label: "Formación", href: "/dashboard/training" },
+    { label: "Puntaje", href: "/dashboard/score" },
+    { label: "Plan PRO", href: "/dashboard/pro/plan" },
     { label: "Subir", href: "/dashboard/challenges/upload" },
   ];
 
