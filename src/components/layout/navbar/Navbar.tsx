@@ -67,10 +67,10 @@ export function Navbar() {
           {isOpen && (
             <ul
               className={clsx(
-                "bg-white rounded shadow-md mt-1 text-sm z-10",
+                "bg-white rounded-xl shadow-xl mt-3 text-sm z-40 ring-1 ring-black/5 animate-fade-in flex flex-col gap-2 p-3",
                 isMobile
-                  ? "relative p-2 border border-gray-100"
-                  : "absolute top-full left-0 min-w-[150px]"
+                  ? "relative p-2 border border-gray-100 space-y-1"
+                  : "absolute top-full left-0 min-w-[180px] p-2 space-y-1"
               )}
             >
               {item.children.map((child) => renderItem(child, isMobile))}
@@ -120,7 +120,7 @@ export function Navbar() {
         </div>
 
         {mobileOpen && (
-          <div className="lg:hidden mt-4 bg-white shadow-lg rounded-xl p-5 animate-fadeIn">
+          <div className="lg:hidden mt-4 bg-white shadow-lg rounded-xl p-5 animate-fade-in">
             <ul className="flex flex-col gap-3">
               {navbarItemsStatic.map((item) => renderItem(item, true))}
             </ul>

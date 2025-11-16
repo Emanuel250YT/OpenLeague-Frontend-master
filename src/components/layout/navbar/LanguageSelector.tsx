@@ -116,11 +116,11 @@ export const LanguageSelector = () => {
       {isOpen && (
         <div
           className="
-            absolute right-0 mt-2 
-            w-40 bg-white 
-            rounded-xl shadow-lg border border-gray-200 
-            overflow-hidden z-10
-            animate-fade-in
+            absolute right-0 mt-3 
+            w-44 bg-white 
+            rounded-xl shadow-xl border border-gray-200 
+            overflow-hidden z-50
+            animate-fade-in ring-1 ring-black/5
           "
         >
           {languages.map(({ code, label }) => (

@@ -105,7 +105,7 @@ export function DashboardNavbar({ link, returnData }: DashboardNavbarProps) {
               </button>
 
               {open && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-md py-2 z-50">
+                <div className="absolute right-0 mt-3 w-52 bg-white border border-gray-200 rounded-xl shadow-xl py-2 z-50 ring-1 ring-black/5 animate-fade-in">
                   {hiddenLinks.map((item) => {
                     const isActive = pathname === item.href;
                     return (
