@@ -5,6 +5,7 @@ import { DashboardNavbar } from "@/components/dashboard/DashboardNavbar";
 import { Footer } from "@/components/layout/footer/Footer";
 import { Plus } from "lucide-react";
 import { api } from "@/lib/api";
+import { WalletSummary } from "@/components/wallet/WalletSummary";
 
 type Wallet = {
   address: string;
@@ -14,10 +15,10 @@ type Wallet = {
 };
 
 export default function WalletPage() {
-  const balances = {
-    tokens: 1250,
-    estimatedUsd: 125.0,
-  };
+  const [loadingBalances, setLoadingBalances] = useState<boolean>(false);
+  const [balancesByWallet, setBalancesByWallet] = useState<
+    Record<string, { nativeSymbol: string; nativeAmount: number; usdValue: number }>
+  >({});
 
   const incoming = [
     { type: "Inversión", amount: 50, date: "2025-02-10" },
@@ -48,13 +49,63 @@ export default function WalletPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  // Utilities
+  async function fetchCoingeckoPrices(): Promise<Record<string, number>> {
+    // Returns USD prices keyed by coingecko id
+    const url =
+      "https://api.coingecko.com/api/v3/simple/price?ids=polkadot,moonbeam,ethereum,tether&vs_currencies=usd";
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error("price_fetch_failed");
+    const data = (await res.json()) as Record<string, { usd: number }>;
+    return {
+      polkadot: data?.polkadot?.usd ?? 0,
+      moonbeam: data?.moonbeam?.usd ?? 0,
+      ethereum: data?.ethereum?.usd ?? 0,
+      tether: data?.tether?.usd ?? 1,
+    };
+  }
+
+  async function getEvmNativeBalance(rpcUrl: string, address: string): Promise<bigint> {
+    const body = {
+      jsonrpc: "2.0",
+      id: 1,
+      method: "eth_getBalance",
+      params: [address, "latest"],
+    };
+    const res = await fetch(rpcUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) throw new Error("evm_balance_failed");
+    const json = await res.json();
+    const hex = json?.result as string;
+    return BigInt(hex ?? "0x0");
+  }
+
+  async function getPolkadotBalance(address: string): Promise<bigint> {
+    // Ligero fallback usando DotScan (no requiere API key para balance básico en la práctica; si falla, retornamos 0)
+    // Alternativas: Subscan (requiere API key), RPC ws (pesado en frontend).
+    try {
+      const resp = await fetch(`https://api.dotscan.com/api/v1/account/${address}`, {
+        headers: { "Accept": "application/json" },
+      });
+      if (!resp.ok) throw new Error("dotscan_failed");
+      const data = await resp.json();
+      // Se espera algo como { data: { balance: { free: "1234567890" }}}; si difiere, caemos al catch.
+      const free = BigInt(data?.data?.balance?.free ?? 0);
+      return free;
+    } catch {
+      return BigInt(0);
+    }
+  }
+
   useEffect(() => {
     let mounted = true;
     (async () => {
       setError(null);
       try {
         const list = await api.auth.listWallets();
-        console.log(list)
         if (mounted) setWallets(Array.isArray(list) ? list : []);
       } catch {
         setError("No se pudieron cargar las wallets.");
@@ -66,6 +117,86 @@ export default function WalletPage() {
       mounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      if (wallets.length === 0) {
+        setBalancesByWallet({});
+        return;
+      }
+      setLoadingBalances(true);
+      try {
+        const prices = await fetchCoingeckoPrices();
+
+        const entries = await Promise.all(
+          wallets.map(async (w) => {
+            const id = `${w.address}-${w.network ?? ""}`;
+            const net = (w.network || "").toLowerCase();
+            try {
+              if (net.includes("moonbeam")) {
+                const isDev = process.env.NODE_ENV !== "production";
+                const wei = await getEvmNativeBalance(
+                  isDev ? "https://rpc.api.moonbase.moonbeam.network" : "https://rpc.api.moonbeam.network",
+                  w.address
+                );
+              
+                const glmr = Number(wei) / 1e18;
+              
+                let usd = 0;
+                let symbol = "GLMR";
+              
+                if (isDev) {
+                  const devAmount = glmr; 
+                  usd = devAmount * 100;
+                  symbol = "DEV";
+                } else {
+                  usd = glmr * 1;
+                }
+              
+                return [id, { nativeSymbol: symbol, nativeAmount: glmr, usdValue: usd }] as const;
+              }
+              
+              if (net.includes("ethereum") || (w.address.startsWith("0x") && !net)) {
+                // Ethereum ETH
+                const wei = await getEvmNativeBalance("https://cloudflare-eth.com", w.address);
+                const eth = Number(wei) / 1e18;
+                const usd = eth * (prices.ethereum ?? 0);
+                return [id, { nativeSymbol: "ETH", nativeAmount: eth, usdValue: usd }] as const;
+              }
+              if (net.includes("polkadot") || (!w.address.startsWith("0x") && !net)) {
+                // Polkadot DOT - 10 decimales
+                const plancks = await getPolkadotBalance(w.address);
+                const dot = Number(plancks) / 1e10;
+                const usd = dot * (prices.polkadot ?? 0);
+                return [id, { nativeSymbol: "DOT", nativeAmount: dot, usdValue: usd }] as const;
+              }
+              // Desconocida: asumimos 0
+              return [id, { nativeSymbol: w.currency || "N/A", nativeAmount: 0, usdValue: 0 }] as const;
+            } catch {
+              return [id, { nativeSymbol: w.currency || "N/A", nativeAmount: 0, usdValue: 0 }] as const;
+            }
+          })
+        );
+
+        if (!mounted) return;
+        const map: Record<string, { nativeSymbol: string; nativeAmount: number; usdValue: number }> = {};
+        for (const [id, val] of entries) {
+          map[id] = val;
+        }
+        setBalancesByWallet(map);
+      } catch {
+        if (!mounted) return;
+        // Si fallan precios o balances, mostramos 0 pero no bloqueamos
+        setBalancesByWallet({});
+      } finally {
+        if (mounted) setLoadingBalances(false);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [wallets]);
 
   const onAddWallet = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,24 +247,7 @@ export default function WalletPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="space-y-6 lg:col-span-2">
-            <div className="bg-black text-white p-6 rounded-2xl">
-              <p className="text-gray-400 text-sm uppercase tracking-wider mb-3">
-                Tu Wallet
-              </p>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-gray-400 text-sm">Tokens OL</p>
-                  <p className="text-3xl font-bold">{balances.tokens}</p>
-                </div>
-                <div>
-                  <p className="text-gray-400 text-sm">Valor estimado</p>
-                  <p className="text-2xl font-bold">${balances.estimatedUsd.toFixed(2)} USD</p>
-                </div>
-              </div>
-              <button className="cursor-pointer w-full mt-4 bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-gray-100 transition-colors">
-                Ver detalles
-              </button>
-            </div>
+            <WalletSummary />
 
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
               <h3 className="text-xl font-bold text-black mb-4">Ingresos</h3>
@@ -170,14 +284,25 @@ export default function WalletPage() {
                 <p className="text-sm text-gray-600">No tienes wallets agregadas.</p>
               ) : (
                 <div className="space-y-2">
-                  {wallets.map((w) => (
-                    <div key={`${w.address}-${w.network ?? ""}`} className="p-4 bg-gray-50 rounded-xl border border-gray-200">
-                      <p className="font-bold text-black break-all">{w.address}</p>
-                      <p className="text-xs text-gray-600 mt-1">
-                        {w.network || "network: N/A"} • {w.currency || "currency: N/A"} {w.isDefault ? "• Default" : ""}
-                      </p>
-                    </div>
-                  ))}
+                  {wallets.map((w) => {
+                    const id = `${w.address}-${w.network ?? ""}`;
+                    const bal = balancesByWallet[id];
+                    return (
+                      <div key={id} className="p-4 bg-gray-50 rounded-xl border border-gray-200">
+                        <p className="font-bold text-black break-all">{w.address}</p>
+                        <p className="text-xs text-gray-600 mt-1">
+                          {w.network || "network: N/A"} • {w.currency || "currency: N/A"} {w.isDefault ? "• Default" : ""}
+                        </p>
+                        <p className="text-sm text-gray-800 mt-2">
+                          {loadingBalances
+                            ? "Cargando balance..."
+                            : bal
+                            ? `${bal.nativeAmount.toFixed(6)} ${bal.nativeSymbol} ≈ $${bal.usdValue.toFixed(2)} USD`
+                            : "Sin datos"}
+                        </p>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
