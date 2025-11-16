@@ -96,11 +96,6 @@ export default function UploadChallengePage() {
   return (
     <div className="min-h-screen bg-white space-y-12">
       <DashboardNavbar
-        link={{
-          label: "Subir Video",
-          href: "/dashboard/challenges/upload",
-          icon: <Plus />,
-        }}
         returnData={{
           label: "Volver a los retos",
           href: "/dashboard/challenges",

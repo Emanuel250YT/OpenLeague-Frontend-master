@@ -16,11 +16,6 @@ export default function ClubsPage() {
   return (
     <div className="min-h-screen bg-white space-y-12">
       <DashboardNavbar
-        link={{
-          label: "Subir Video",
-          href: "/dashboard/challenges/upload",
-          icon: <Plus />,
-        }}
         returnData={{ label: "Volver al panel", href: "/dashboard" }}
       />
 

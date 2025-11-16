@@ -232,11 +232,6 @@ export default function WalletPage() {
   return (
     <div className="min-h-screen bg-white space-y-12">
       <DashboardNavbar
-        link={{
-          label: "Subir Video",
-          href: "/dashboard/challenges/upload",
-          icon: <Plus />,
-        }}
         returnData={{ label: "Volver al panel", href: "/dashboard" }}
       />
 
@@ -247,7 +242,7 @@ export default function WalletPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="space-y-6 lg:col-span-2">
-            <WalletSummary />
+            <WalletSummary viewDetails={false} />
 
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
               <h3 className="text-xl font-bold text-black mb-4">Ingresos</h3>
@@ -263,12 +258,12 @@ export default function WalletPage() {
                   </div>
                 ))}
               </div>
-              <a
+              {/* <a
                 href="/dashboard/wallet/expense"
                 className="inline-flex items-center justify-center mt-4 bg-black text-white px-6 py-3 rounded-full font-bold hover:bg-gray-900 transition-colors"
               >
                 Cargar gasto
-              </a>
+              </a> */}
             </div>
 
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
@@ -367,7 +362,7 @@ export default function WalletPage() {
           </div>
 
           <div className="space-y-6">
-            <div className="bg-white border border-gray-200 rounded-2xl p-6">
+            {/* <div className="bg-white border border-gray-200 rounded-2xl p-6">
               <h4 className="text-lg font-bold text-black mb-3">
                 ¿Qué puedes hacer?
               </h4>
@@ -382,9 +377,9 @@ export default function WalletPage() {
                   </button>
                 ))}
               </div>
-            </div>
+            </div> */}
 
-            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+            {/* <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
               <h4 className="text-lg font-bold text-blue-900 mb-3">
                 Gastos transparentes
               </h4>
@@ -410,7 +405,7 @@ export default function WalletPage() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </div> */}
 
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
               <h4 className="text-lg font-bold text-black mb-2">

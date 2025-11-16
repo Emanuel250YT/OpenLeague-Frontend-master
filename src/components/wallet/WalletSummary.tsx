@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 
 type Wallet = {
   address: string;
@@ -10,7 +12,7 @@ type Wallet = {
   isDefault?: boolean | null;
 };
 
-export function WalletSummary() {
+export function WalletSummary({ viewDetails = true }: { viewDetails?: boolean }) {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [loadingWallets, setLoadingWallets] = useState(true);
   const [loadingBalances, setLoadingBalances] = useState(false);
@@ -158,9 +160,13 @@ export function WalletSummary() {
           <p className="text-2xl font-bold">{loadingWallets ? "-" : wallets.length}</p>
         </div>
       </div>
-      <button className="cursor-pointer w-full mt-4 bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-gray-100 transition-colors">
-        Ver detalles
-      </button>
+      
+      {viewDetails && (
+        <Link href="/dashboard/wallet" className="cursor-pointer inline-flex items-center justify-center gap-2 w-full mt-4 bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-gray-100 transition-colors">
+          Ver detalles
+          <ArrowUpRight size={16} />
+        </Link>
+      )}
     </div>
   );
 }
