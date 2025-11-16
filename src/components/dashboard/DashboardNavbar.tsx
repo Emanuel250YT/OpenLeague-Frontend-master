@@ -23,6 +23,8 @@ export function DashboardNavbar({ link, returnData }: DashboardNavbarProps) {
     { label: "Formación", href: "/dashboard/training" },
     { label: "Puntaje", href: "/dashboard/score" },
     { label: "Plan PRO", href: "/dashboard/pro/plan" },
+    { label: "Campaña", href: "/dashboard/campaign" },
+    { label: "Wallet", href: "/dashboard/wallet" },
     { label: "Subir", href: "/dashboard/challenges/upload" },
   ];
 
