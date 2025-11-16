@@ -259,14 +259,14 @@ export default function ExploreSubmissionsPage() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleVote(s.id, "UP")}
-                          className="px-3 py-2 rounded-lg bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 text-sm font-bold"
+                          className="cursor-pointer px-3 py-2 rounded-lg bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 text-sm font-bold"
                           aria-label="Pulgar arriba"
                         >
                           👍 {up}
                         </button>
                         <button
                           onClick={() => handleVote(s.id, "DOWN")}
-                          className="px-3 py-2 rounded-lg bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 text-sm font-bold"
+                          className="cursor-pointer px-3 py-2 rounded-lg bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 text-sm font-bold"
                           aria-label="Pulgar abajo"
                         >
                           👎 {down}
