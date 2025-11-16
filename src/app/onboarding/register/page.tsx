@@ -58,7 +58,7 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          <div className="space-y-3">
+          {/* <div className="space-y-3">
             <button className="cursor-pointer w-full flex items-center justify-center gap-3 border-2 border-gray-200 rounded-full px-6 py-3 hover:border-black transition-colors">
               <Image
                 src="/assets/images/logos/google.webp"
@@ -78,14 +78,14 @@ export default function RegisterPage() {
               />
               <span className="font-semibold">Continuar con Apple</span>
             </button>
-          </div>
+          </div> */}
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">o con email</span>
+            <span className="px-4 bg-white text-gray-500">Regístrate con tu email</span>
             </div>
           </div>
 

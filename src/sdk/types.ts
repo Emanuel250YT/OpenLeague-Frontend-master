@@ -307,3 +307,77 @@ export interface UseCouponResponse {
     'id' | 'code' | 'type' | 'status' | 'maxUses' | 'currentUses' | 'remainingUses' | 'maxAmountPerUse' | 'expiresAt'
   >;
 }
+
+export type CampaignStatus = 'DRAFT' | 'ACTIVE' | 'PAUSED' | 'COMPLETED' | 'CANCELLED';
+
+export interface SportingGoal {
+  goal: string;
+}
+
+export interface BudgetBreakdown {
+  nutrition?: number;
+  personalTrainer?: number;
+  travels?: number;
+  equipment?: number;
+  physiotherapy?: number;
+  total: number;
+}
+
+export interface TimelineItem {
+  date: string; // ISO date
+  milestone: string;
+}
+
+export interface FeaturedChallenge {
+  name: string;
+  category: string;
+  points: number;
+  validated: boolean;
+  validator: string;
+}
+
+export interface Campaign {
+  id: string;
+  title: string;
+  description?: string | null;
+  photoUrl?: string | null;
+  presentationVideo?: string | null;
+  olRating: number;
+  sportingGoals: SportingGoal[];
+  budget: BudgetBreakdown;
+  timeline: TimelineItem[];
+  featuredChallenges?: FeaturedChallenge[];
+  playerId: string;
+  startDate?: string | null;
+  endDate?: string | null;
+  status: CampaignStatus;
+  createdAt?: string;
+  updatedAt?: string;
+  createdById?: string;
+}
+
+export interface CreateCampaignRequest {
+  title: string;
+  description?: string;
+  photoUrl?: string;
+  presentationVideo?: string;
+  olRating: number;
+  sportingGoals: SportingGoal[];
+  budget: BudgetBreakdown;
+  timeline: TimelineItem[];
+  featuredChallenges?: FeaturedChallenge[];
+  playerId: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+export type UpdateCampaignRequest = Partial<
+  Omit<
+    CreateCampaignRequest,
+    'playerId'
+  >
+> & {
+  status?: CampaignStatus;
+};
+
+

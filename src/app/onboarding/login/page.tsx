@@ -54,39 +54,39 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <div className="space-y-3">
+          {/* <div className="space-y-3">
             {error && (
               <div className="px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
                 {error}
               </div>
             )}
-          <button className="cursor-pointer w-full flex items-center justify-center gap-3 border-2 border-gray-200 rounded-full px-6 py-3 hover:border-black transition-colors">
-              <Image
-                src="/assets/images/logos/google.webp"
-                alt="Google Logo"
-                width={24}
-                height={24}
-              />
-              <span className="font-semibold">Continuar con Google</span>
-            </button>
+          // {/* <button className="cursor-pointer w-full flex items-center justify-center gap-3 border-2 border-gray-200 rounded-full px-6 py-3 hover:border-black transition-colors">
+          //     <Image
+          //       src="/assets/images/logos/google.webp"
+          //       alt="Google Logo"
+          //       width={24}
+          //       height={24}
+          //     />
+          //     <span className="font-semibold">Continuar con Google</span>
+          //   </button>
 
-            <button className="cursor-pointer w-full flex items-center justify-center gap-3 border-2 border-gray-200 rounded-full px-6 py-3 hover:border-black transition-colors">
-              <Image
-                src="/assets/images/logos/apple.png"
-                alt="Apple Logo"
-                width={24}
-                height={24}
-              />
-              <span className="font-semibold">Continuar con Apple</span>
-            </button>
-          </div>
+          //   <button className="cursor-pointer w-full flex items-center justify-center gap-3 border-2 border-gray-200 rounded-full px-6 py-3 hover:border-black transition-colors">
+          //     <Image
+          //       src="/assets/images/logos/apple.png"
+          //       alt="Apple Logo"
+          //       width={24}
+          //       height={24}
+          //     />
+          //     <span className="font-semibold">Continuar con Apple</span>
+          //   </button>
+          </div>*/}
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">o con email</span>
+              <span className="px-4 bg-white text-gray-500">Ingresa con tu email</span>
             </div>
           </div>
 
