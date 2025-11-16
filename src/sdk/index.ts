@@ -1,8 +1,8 @@
 import { AxiosInstance } from 'axios';
-import { createHttpClient, ApiClientOptions } from './http.js';
-import { AuthApi } from './auth.js';
-import { UsersApi } from './users.js';
-import { UploadApi } from './upload.js';
+import { createHttpClient, ApiClientOptions } from './http';
+import { AuthApi } from './auth';
+import { UsersApi } from './users';
+import { UploadApi } from './upload';
 
 export interface OpenLeagueApiClient {
   http: AxiosInstance;
@@ -21,7 +21,7 @@ export function createOpenLeagueApiClient(options: ApiClientOptions): OpenLeague
   };
 }
 
-export * from './types.js';
-export * from './http.js';
+export * from './types';
+export * from './http';
 
 

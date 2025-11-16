@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { OnboardingHeader } from '@/components/onboarding/OnboardingHeader'
+import { api, setTokens } from '@/lib/api'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -12,10 +13,30 @@ export default function LoginPage() {
     email: '',
     password: ''
   })
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    router.push('/dashboard')
+    setError(null)
+    setSubmitting(true)
+    try {
+      const resp = await api.auth.login({
+        email: formData.email,
+        password: formData.password
+      })
+      setTokens({ accessToken: resp.accessToken, refreshToken: resp.refreshToken })
+      router.push('/dashboard')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        'Error al iniciar sesión. Intenta nuevamente.'
+      setError(typeof message === 'string' ? message : 'Error al iniciar sesión.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -34,6 +55,11 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-3">
+            {error && (
+              <div className="px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
+                {error}
+              </div>
+            )}
           <button className="cursor-pointer w-full flex items-center justify-center gap-3 border-2 border-gray-200 rounded-full px-6 py-3 hover:border-black transition-colors">
               <Image
                 src="/assets/images/logos/google.webp"
@@ -105,9 +131,10 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="cursor-pointer w-full bg-black text-white py-4 rounded-full font-bold hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 group"
+              disabled={submitting}
+              className="cursor-pointer w-full bg-black text-white py-4 rounded-full font-bold hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 group disabled:opacity-60"
             >
-              Iniciar sesión
+              {submitting ? 'Ingresando...' : 'Iniciar sesión'}
               <svg
                 className="w-5 h-5 transition-transform group-hover:translate-x-1"
                 fill="none"

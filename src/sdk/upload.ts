@@ -1,5 +1,5 @@
 import { AxiosInstance } from 'axios';
-import { ApiResponseSuccess, UploadFileOptions, UploadedFileInfo } from './types.js';
+import { ApiResponseSuccess, UploadFileOptions, UploadedFileInfo } from './types';
 
 export class UploadApi {
   constructor(private http: AxiosInstance) {}

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { DashboardNavbar } from "@/components/dashboard/DashboardNavbar";
 import { Plus } from "lucide-react";
 import { Footer } from "@/components/layout/footer/Footer";
+import { api } from "@/lib/api";
 
 export default function DashboardPage() {
   const [notifications] = useState([
@@ -27,6 +28,25 @@ export default function DashboardPage() {
       time: "Hoy",
     },
   ]);
+  const [me, setMe] = useState<{ name?: string | null; email?: string } | null>(null);
+  const [loadingMe, setLoadingMe] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const user = await api.auth.me();
+        if (mounted) setMe(user);
+      } catch {
+        // noop
+      } finally {
+        if (mounted) setLoadingMe(false);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-white space-y-12">
@@ -46,6 +66,11 @@ export default function DashboardPage() {
         <h2 className="text-4xl font-bold text-black uppercase font-kensmark mb-6">
           Tu centro de alto rendimiento
         </h2>
+        {!loadingMe && (
+          <p className="text-gray-600 mb-4">
+            Bienvenido{me?.name ? `, ${me.name}` : me?.email ? `, ${me.email}` : ""}.
+          </p>
+        )}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-gradient-to-br from-gray-900 to-black text-white p-6 sm:p-8 rounded-2xl">

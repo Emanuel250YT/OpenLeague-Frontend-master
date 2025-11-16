@@ -3,8 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { DashboardNavbar } from "@/components/dashboard/DashboardNavbar";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { Footer } from "@/components/layout/footer/Footer";
+import { api } from "@/lib/api";
+import clsx from "clsx";
 
 export default function UploadChallengePage() {
   const [selectedType, setSelectedType] = useState("");
@@ -12,6 +14,8 @@ export default function UploadChallengePage() {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [description, setDescription] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successUrl, setSuccessUrl] = useState<string | null>(null);
 
   const challengeTypes = [
     {
@@ -73,8 +77,27 @@ export default function UploadChallengePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsUploading(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsUploading(false);
+    setError(null);
+    setSuccessUrl(null);
+    try {
+      if (!videoFile) throw new Error("Debes seleccionar un video.");
+      const resp = await api.upload.uploadFile(videoFile, {
+        description:
+          `${selectedType} - ${selectedChallenge} | ${description}`.trim(),
+        enableDashStreaming: false,
+      });
+      const url = resp?.data?.publicUrl;
+      setSuccessUrl(url || null);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Error al subir el video. Intenta nuevamente.";
+      setError(typeof msg === "string" ? msg : "Error al subir el video.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -95,6 +118,26 @@ export default function UploadChallengePage() {
         <h2 className="text-4xl font-bold text-black uppercase font-kensmark mb-6">
           Subir Reto
         </h2>
+        {error && (
+          <div className="mb-4 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
+            {error}
+          </div>
+        )}
+        {successUrl && (
+          <div className="mb-4 px-4 py-3 rounded-lg bg-green-50 border border-green-200 text-sm text-green-800">
+            Video subido correctamente.{" "}
+            {successUrl ? (
+              <a
+                className="underline"
+                href={successUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Ver archivo
+              </a>
+            ) : null}
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="bg-white border border-gray-200 rounded-xl p-6">
             <h2 className="text-xl font-bold text-black mb-4">
@@ -270,9 +313,19 @@ export default function UploadChallengePage() {
               <button
                 type="submit"
                 disabled={isUploading}
-                className="flex-1 bg-black text-white px-8 py-4 rounded-full font-bold hover:bg-gray-900 transition-colors disabled:bg-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-black"
+                className={clsx(
+                  "flex-1 bg-black text-white px-8 py-4 rounded-full font-bold hover:bg-gray-900 transition-colors disabled:bg-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-black flex items-center justify-center gap-2",
+                  { "opacity-50 cursor-not-allowed": isUploading, "opacity-100 cursor-pointer": !isUploading}
+                )}
               >
-                {isUploading ? "Subiendo..." : "Enviar reto"}
+                {isUploading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Subiendo...
+                  </>
+                ) : (
+                  "Enviar reto"
+                )}
               </button>
               <span className="sr-only" aria-live="polite">
                 {isUploading ? "Subiendo video" : ""}

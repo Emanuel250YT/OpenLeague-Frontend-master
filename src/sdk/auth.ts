@@ -5,7 +5,7 @@ import {
   RegisterRequest,
   VerifyOtpRequest,
   UserSummary,
-} from './types.js';
+} from './types';
 
 export class AuthApi {
   constructor(private http: AxiosInstance) {}

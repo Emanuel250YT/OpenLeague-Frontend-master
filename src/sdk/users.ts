@@ -1,5 +1,5 @@
 import { AxiosInstance } from 'axios';
-import { CreateUserRequest, UserSummary } from './types.js';
+import { CreateUserRequest, UserSummary } from './types';
 
 export class UsersApi {
   constructor(private http: AxiosInstance) {}
