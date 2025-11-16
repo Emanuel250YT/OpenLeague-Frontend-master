@@ -1,7 +1,10 @@
-import { ArrowLeft } from "lucide-react";
+"use client";
+
+import { ArrowLeft, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
+import { useState, useRef, useEffect } from "react";
 
 interface DashboardNavbarProps {
   link?: {
@@ -17,6 +20,18 @@ interface DashboardNavbarProps {
 
 export function DashboardNavbar({ link, returnData }: DashboardNavbarProps) {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (!menuRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
   const navLinks = [
     { label: "Inicio", href: "/dashboard" },
     { label: "Retos", href: "/dashboard/challenges" },
@@ -25,8 +40,17 @@ export function DashboardNavbar({ link, returnData }: DashboardNavbarProps) {
     { label: "Plan PRO", href: "/dashboard/pro/plan" },
     { label: "Campaña", href: "/dashboard/campaign" },
     { label: "Wallet", href: "/dashboard/wallet" },
+    { label: "Notificaciones", href: "/dashboard/notifications" },
+    { label: "Contrato", href: "/dashboard/contract" },
+    { label: "Clubes", href: "/dashboard/clubs" },
+    { label: "Misión", href: "/dashboard/mission" },
+    { label: "Proveedores", href: "/dashboard/providers" },
+    { label: "Configuración", href: "/dashboard/settings" },
     { label: "Subir", href: "/dashboard/challenges/upload" },
   ];
+
+  const visibleLinks = navLinks.slice(0, 5);
+  const hiddenLinks = navLinks.slice(5);
 
   return (
     <nav className="w-full py-6 border-b border-gray-200">
@@ -34,9 +58,8 @@ export function DashboardNavbar({ link, returnData }: DashboardNavbarProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link
-              href={returnData.href ?? "/"}
+              href={returnData.href}
               className="flex items-center gap-2 text-sm text-gray-600 hover:text-black transition-colors"
-              aria-label={returnData.label}
             >
               <ArrowLeft className="w-4 h-4" />
               {returnData.label}
@@ -44,25 +67,24 @@ export function DashboardNavbar({ link, returnData }: DashboardNavbarProps) {
             <h1 className="font-kensmark font-bold text-xl">Open League</h1>
           </div>
 
-          <div className="relative -mx-2">
+          <div className="flex items-center gap-2">
             <ul
-              className="flex items-center gap-2 overflow-x-auto no-scrollbar px-2"
+              className="flex items-center gap-2"
               role="tablist"
               aria-label="Navegación del panel"
             >
-              {navLinks.map((item) => {
+              {visibleLinks.map((item) => {
                 const isActive = pathname === item.href;
                 return (
                   <li key={item.href} className="flex-shrink-0">
                     <Link
                       href={item.href}
                       className={clsx(
-                        "inline-flex items-center justify-center px-4 py-2.5 rounded-full text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-black",
+                        "inline-flex items-center justify-center px-4 py-2.5 rounded-full text-sm font-semibold transition-colors",
                         isActive
                           ? "bg-black text-white"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       )}
-                      aria-current={isActive ? "page" : undefined}
                     >
                       {item.label}
                     </Link>
@@ -70,6 +92,38 @@ export function DashboardNavbar({ link, returnData }: DashboardNavbarProps) {
                 );
               })}
             </ul>
+
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setOpen((x) => !x)}
+                className="cursor-pointer px-4 py-2.5 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors flex items-center"
+              >
+                <MoreHorizontal className="w-5 h-5 text-gray-700" />
+              </button>
+
+              {open && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-md py-2 z-50">
+                  {hiddenLinks.map((item) => {
+                    const isActive = pathname === item.href;
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={clsx(
+                          "block px-4 py-2 text-sm transition-colors",
+                          isActive
+                            ? "text-black font-semibold"
+                            : "text-gray-700 hover:bg-gray-100"
+                        )}
+                        onClick={() => setOpen(false)}
+                      >
+                        {item.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
 
           {link && (
