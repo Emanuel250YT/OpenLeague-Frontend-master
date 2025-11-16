@@ -4,10 +4,11 @@ import { ArrowRight } from "lucide-react";
 import { SectionTitle } from "../../ui/SectionTitle";
 import { Separator } from "../../ui/Separator";
 import { FounderCard } from "./FounderCard";
+import Link from "next/link";
 
 export function FoundersSection() {
   return (
-    <section className="relative w-full pb-12 bg-gray-100">
+    <section id="founders" className="relative w-full pb-12 bg-gray-100">
       <Separator index={7} title="Founders" theme="extralight" />
 
       <div className="relative w-[90%] sm:w-[85%] md:w-[80%] mx-auto overflow-hidden space-y-12">
@@ -32,9 +33,9 @@ export function FoundersSection() {
           </div>
 
           <div className="order-3">
-            <button className="cursor-pointer flex items-center gap-2 px-6 py-3 bg-[#060318] text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity whitespace-nowrap">
+            <Link href="/#founders" className="cursor-pointer flex items-center gap-2 px-6 py-3 bg-[#060318] text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity whitespace-nowrap">
               Learn more <ArrowRight size={18} />
-            </button>
+            </Link>
           </div>
         </div>
 

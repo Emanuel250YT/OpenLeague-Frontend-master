@@ -124,7 +124,7 @@ export function Navbar() {
 
           <div className="hidden lg:flex items-center gap-3.5">
             <Link
-              href="/login"
+              href="/onboarding/login"
               className="w-fit cursor-pointer hover:text-black hover:underline text-base font-medium text-gray-700 w-full text-left"
             >
               {t("navbar_buttons_login")}

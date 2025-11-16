@@ -79,7 +79,7 @@ export function MembersSection() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`
+                className={`cursor-pointer
                   flex items-center gap-2 px-6 py-3.5 rounded-full text-sm font-medium transition whitespace-nowrap
                   ${
                     selectedCategory === cat
