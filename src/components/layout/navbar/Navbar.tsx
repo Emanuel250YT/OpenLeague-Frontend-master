@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { getAccessToken } from "@/lib/api";
 
 export function Navbar() {
   const { t } = useLanguage();
@@ -14,9 +15,18 @@ export function Navbar() {
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => !!getAccessToken());
   const dropdownRef = useRef<HTMLUListElement | null>(null);
 
   useEffect(() => {
+    // Sincronizar sesión cuando cambie el storage (p.ej., login/logout en otra pestaña)
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "accessToken") {
+        setIsLoggedIn(!!e.newValue);
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -37,6 +47,7 @@ export function Navbar() {
     document.addEventListener("keydown", handleEscape);
 
     return () => {
+      window.removeEventListener("storage", handleStorage);
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEscape);
     };
@@ -122,22 +133,34 @@ export function Navbar() {
             {navbarItemsStatic.map((item) => renderItem(item))}
           </ul>
 
-          <div className="hidden lg:flex items-center gap-3.5">
-            <Link
-              href="/onboarding/login"
-              className="w-fit cursor-pointer hover:text-black hover:underline text-base font-medium text-gray-700 w-full text-left"
-            >
-              {t("navbar_buttons_login")}
-            </Link>
-            <span className="text-gray-400">/</span>
-            <Link
-              href="/onboarding"
-              className="flex items-center gap-2 px-6 py-3.5 bg-[#060318] text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity whitespace-nowrap"
-            >
-              {t("navbar_buttons_joinus")}
-              <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
+          {isLoggedIn ? (
+            <div className="hidden lg:flex items-center gap-3.5">
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 px-6 py-3.5 bg-[#060318] text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity whitespace-nowrap"
+              >
+                Dashboard
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+          ) : (
+            <div className="hidden lg:flex items-center gap-3.5">
+              <Link
+                href="/onboarding/login"
+                className="w-fit cursor-pointer hover:text-black hover:underline text-base font-medium text-gray-700 w-full text-left"
+              >
+                {t("navbar_buttons_login")}
+              </Link>
+              <span className="text-gray-400">/</span>
+              <Link
+                href="/onboarding"
+                className="flex items-center gap-2 px-6 py-3.5 bg-[#060318] text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity whitespace-nowrap"
+              >
+                {t("navbar_buttons_joinus")}
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+          )}
 
           <button
             onClick={toggleMobile}
@@ -153,21 +176,33 @@ export function Navbar() {
               {navbarItemsStatic.map((item) => renderItem(item, true))}
             </ul>
 
-            <div className="flex flex-col gap-4 mt-6">
-              <Link
-                href="/login"
-                className="cursor-pointer hover:text-black hover:underline text-base font-medium text-gray-700 w-full text-left"
-              >
-                {t("navbar_buttons_login")}
-              </Link>
-              <Link
-                href={"/onboarding"}
-                className="flex items-center justify-center gap-2 px-6 py-3.5 bg-[#060318] text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
-              >
-                {t("navbar_buttons_joinus")}
-                <ChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
+            {isLoggedIn ? (
+              <div className="flex flex-col gap-4 mt-6">
+                <Link
+                  href={"/dashboard"}
+                  className="flex items-center justify-center gap-2 px-6 py-3.5 bg-[#060318] text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  Dashboard
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4 mt-6">
+                <Link
+                  href="/login"
+                  className="cursor-pointer hover:text-black hover:underline text-base font-medium text-gray-700 w-full text-left"
+                >
+                  {t("navbar_buttons_login")}
+                </Link>
+                <Link
+                  href={"/onboarding"}
+                  className="flex items-center justify-center gap-2 px-6 py-3.5 bg-[#060318] text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  {t("navbar_buttons_joinus")}
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </div>

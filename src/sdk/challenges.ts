@@ -4,6 +4,8 @@ import {
   CreateChallengeRequest,
   CreateSubmissionRequest,
   ChallengeStatus,
+  ChallengeSubmissionWithVotes,
+  SubmissionVotes,
 } from './types';
 
 export class ChallengesApi {
@@ -54,6 +56,28 @@ export class ChallengesApi {
     const { data } = await this.http.patch<Challenge>(`/challenges/${id}`, payload);
     return data;
   }
+
+  async listSubmissions(challengeId: string): Promise<ChallengeSubmissionWithVotes[]> {
+    const { data } = await this.http.get<ChallengeSubmissionWithVotes[]>(`/challenges/${challengeId}/submissions`);
+    return data;
+  }
+
+  async listAllSubmissions(params?: { page?: number; limit?: number }): Promise<ChallengeSubmissionWithVotes[]> {
+    const { data } = await this.http.get<ChallengeSubmissionWithVotes[]>(`/challenges/submissions`, { params });
+    return data;
+  }
+
+  async voteSubmission(submissionId: string, value: 'UP' | 'DOWN'): Promise<SubmissionVotes> {
+    const { data } = await this.http.post<SubmissionVotes>(`/challenges/submissions/${submissionId}/vote`, { value });
+    console.log(data)
+    return data;
+  }
+
+  async getSubmissionVotes(submissionId: string): Promise<SubmissionVotes> {
+    const { data } = await this.http.get<SubmissionVotes>(`/challenges/submissions/${submissionId}/votes`);
+    console.log(data)
+    return data;
+  }
 }
 
 export type {
@@ -61,6 +85,8 @@ export type {
   CreateChallengeRequest,
   CreateSubmissionRequest,
   ChallengeStatus,
+  ChallengeSubmissionWithVotes,
+  SubmissionVotes,
 } from './types';
 
 

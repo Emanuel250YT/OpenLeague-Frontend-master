@@ -24,6 +24,13 @@ export class UploadApi {
     const { data } = await this.http.post<ApiResponseSuccess<UploadedFileInfo>>('/upload/plain', payload);
     return data;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async getPublicUrl(arkaFileId: string): Promise<ApiResponseSuccess<any>> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data } = await this.http.get<ApiResponseSuccess<any>>(`/upload/${arkaFileId}`);
+    return data.data.arkaFileId;
+  }
 }
 
 
