@@ -5,7 +5,7 @@ import { LanguageSelector, useLanguage } from "./LanguageSelector";
 import { ChevronDown, ChevronRight, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 
 export function Navbar() {
@@ -14,6 +14,33 @@ export function Navbar() {
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
+  const dropdownRef = useRef<HTMLUListElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOpenDropdown(null);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpenDropdown(null);
+        setMobileOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
 
   const toggleDropdown = (id: string) => {
     setOpenDropdown((prev) => (prev === id ? null : id));
@@ -66,6 +93,7 @@ export function Navbar() {
 
           {isOpen && (
             <ul
+              ref={dropdownRef}
               className={clsx(
                 "bg-white rounded-xl shadow-xl mt-3 text-sm z-40 ring-1 ring-black/5 animate-fade-in flex flex-col gap-2 p-3",
                 isMobile
