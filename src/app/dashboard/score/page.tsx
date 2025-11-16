@@ -142,6 +142,12 @@ export default function ScorePage() {
               >
                 Ver Plan PRO
               </Link>
+              <Link
+                href="/dashboard/score/history"
+                className="inline-flex items-center justify-center w-full mt-3 bg-gray-100 text-gray-800 px-6 py-3 rounded-full font-bold hover:bg-gray-200 transition-colors"
+              >
+                Ver historial
+              </Link>
             </div>
           </div>
         </div>
