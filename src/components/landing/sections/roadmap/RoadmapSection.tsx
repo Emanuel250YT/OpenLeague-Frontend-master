@@ -7,22 +7,22 @@ import { MilestoneArc } from "./MilestoneArc";
 export function RoadmapSection() {
   const milestones = [
     {
-      title: "2021",
+      title: "Latin Hack",
       description:
         "The year our story began. We established the club's foundation, defined our philosophy, recruited passionate talent, and played our first local friendlies.",
     },
     {
-      title: "2022",
+      title: "Sub 0 Hackathon",
       description:
         "Entered our first official league. Focused on building team chemistry, tactical discipline, and gaining vital match experience.",
     },
     {
-      title: "2023",
+      title: "Milestone 2",
       description:
         "Launched our youth academy to nurture local talent. Strengthened the coaching staff and secured key signings.",
     },
     {
-      title: "2024",
+      title: "Incubation",
       description:
         "Our most ambitious year yet. Competing for promotion, expanding our fanbase, and setting our sights on becoming a household name.",
     },

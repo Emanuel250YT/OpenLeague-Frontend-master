@@ -32,32 +32,32 @@ export function FoundersSection() {
             />
           </div>
 
-          <div className="order-3">
+          {/* <div className="order-3">
             <Link href="/#founders" className="cursor-pointer flex items-center gap-2 px-6 py-3 bg-[#060318] text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity whitespace-nowrap">
               Learn more <ArrowRight size={18} />
             </Link>
-          </div>
+          </div> */}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <FounderCard
-            role="Founder - CEO"
-            name="Jason Harrison"
-            description="A lifelong football strategist with a passion for grassroots development."
-            image="/assets/images/pfp1.jpeg"
+            role="Co-Founder - CMO"
+            name="Mariano Velarde"
+            description="Marketing guru with a knack for building strong community connections."
+            image="https://arkacdn.cloudycoding.com/api/data/b248225b-0e79-4434-b1b0-e05ff4d4623a"
           />
-          <FounderCard
+          {/* <FounderCard
             role="Founder - CEO"
             name="Jason Harrison"
             description="A lifelong football strategist with a passion for grassroots development."
             image="/assets/images/pfp2.png"
             direction="up"
-          />
+          /> */}
           <FounderCard
-            role="Founder - CEO"
-            name="Jason Harrison"
-            description="A lifelong football strategist with a passion for grassroots development."
-            image="/assets/images/pfp3.png"
+            role="Co-Founder - CTO"
+            name="Emanuel Guzman"
+            description="Tech visionary driving innovation at the intersection of sports and technology."
+            image="https://arkacdn.cloudycoding.com/api/data/41185e23-5d23-47b1-a6f2-4dfcd87bddde"
           />
         </div>
       </div>
