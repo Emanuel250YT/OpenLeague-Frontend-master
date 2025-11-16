@@ -57,6 +57,12 @@ export interface CreateUserRequest {
   name?: string;
 }
 
+export interface UpdateUserRequest {
+  name?: string;
+  currentPassword?: string;
+  newPassword?: string;
+}
+
 export interface UploadFileOptions {
   description?: string;
   compress?: boolean;
@@ -134,6 +140,17 @@ export interface ChallengeSubmission {
   status: SubmissionStatus;
   createdAt: string;
   updatedAt: string;
+  arkaFileId: string;
+}
+
+export interface SubmissionVotes {
+  up: number;
+  down: number;
+  score: number;
+}
+
+export interface ChallengeSubmissionWithVotes extends ChallengeSubmission {
+  votes: SubmissionVotes & { total: number };
 }
 
 export interface UserDashboardStats {

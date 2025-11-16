@@ -286,12 +286,20 @@ export default function DashboardPage() {
                 <h2 className="text-2xl font-bold text-black uppercase">
                   Retos de Hoy
                 </h2>
-                <Link
-                  href="/dashboard/challenges"
-                  className="text-sm font-bold text-gray-600 hover:text-black transition-colors"
-                >
-                  Ver todos
-                </Link>
+                <div className="flex items-center gap-3">
+                  <Link
+                    href="/dashboard/explore"
+                    className="text-sm font-bold text-white bg-black px-4 py-2 rounded-full hover:bg-gray-900 transition-colors"
+                  >
+                    Explorar y calificar
+                  </Link>
+                  <Link
+                    href="/dashboard/challenges"
+                    className="text-sm font-bold text-gray-600 hover:text-black transition-colors"
+                  >
+                    Ver todos
+                  </Link>
+                </div>
               </div>
               <div className="space-y-4">
                 {todayChallenges.map((challenge, idx) => (
